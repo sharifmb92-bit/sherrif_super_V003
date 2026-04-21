@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control Familiar - Café</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --fondo: #6F4E37; --tarjeta: #E6D5B8; --texto: #3D2B1F; 
+            --gris: #4d4d4d; --azul: #2C5E8A; --blanco: #FFFFFF;
+        }
+        body { font-family: sans-serif; background: var(--fondo); margin: 0; padding-bottom: 140px; color: var(--blanco); }
+        
+        .header { 
+            background: var(--tarjeta); padding: 15px 20px; display: flex; 
+            justify-content: space-between; align-items: center; position: sticky; 
+            top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .total-caja { background: var(--gris); color: white; padding: 12px; border-radius: 15px; text-align: center; min-width: 110px; }
+        #total { font-size: 28px; font-weight: bold; display: block; }
+
+        .notas-contenedor { padding: 10px; }
+        #bloc-notas { width: 100%; border-radius: 12px; border: none; padding: 10px; background: #FFF9EF; color: var(--texto); font-size: 15px; }
+
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        
+        .boton { 
+            background: var(--tarjeta); border-radius: 18px; padding: 12px; 
+            display: flex; flex-direction: column; align-items: center; border: none; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); color: var(--texto);
+        }
+        .boton:active { background: #D1B894; transform: scale(0.95); }
+        .boton i { font-size: 24px; margin-bottom: 5px; }
+        .boton span { font-weight: bold; font-size: 13px; }
+        .boton small { color: #5D4037; font-weight: bold; font-size: 12px; }
+        
+        /* Iconos con colores temáticos */
+        .c-fruta { color: #D35400; } .c-carne { color: #A93226; } .c-limpieza { color: #512E5F; }
+        .c-leche { color: #2E86C1; } .c-pan { color: #873600; } .c-frio { color: #1ABC9C; }
+        .c-despensa { color: #795548; } .c-bebe { color: #EC407A; }
+
+        .controles { position: fixed; bottom: 15px; right: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .fab { width: 60px; height: 60px; border-radius: 30px; border: none; color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div><h1 style="margin:0; font-size:18px; color: var(--texto);">🏠 Casa (4)</h1><small id="info" style="color: var(--texto);">Control de gasto</small></div>
+    <div class="total-caja" id="caja-total">
+        <span id="total">0.00€</span>
+        <small style="font-size:8px;">MANTÉN PARA BORRAR</small>
+    </div>
+</div>
+
+<div class="notas-contenedor"><textarea id="bloc-notas" rows="2" placeholder="Lista rápida antes de salir..."></textarea></div>
+
+<div class="grid">
+    <button class="boton" onclick="sumar('Fruta/Verd', 3.00)"><i class="fas fa-carrot c-fruta"></i><span>Fruta/Verdura</span><small>3.00€</small></button>
+    <button class="boton" onclick="sumar('Carne', 7.50)"><i class="fas fa-drumstick-bite c-carne"></i><span>Carnicería</span><small>7.50€</small></button>
+    <button class="boton" onclick="sumar('Pescado', 8.00)"><i class="fas fa-fish c-leche"></i><span>Pescadería</span><small>8.00€</small></button>
+    <button class="boton" onclick="sumar('Charcutería', 4.50)"><i class="fas fa-bacon c-carne"></i><span>Embutidos</span><small>4.50€</small></button>
+
+    <button class="boton" onclick="sumar('Lácteos', 1.20)"><i class="fas fa-droplet c-leche"></i><span>Leche/Yogur</span><small>1.20€</small></button>
+    <button class="boton" onclick="sumar('Huevos', 2.50)"><i class="fas fa-egg c-pan"></i><span>Huevos</span><small>2.50€</small></button>
+    <button class="boton" onclick="sumar('Pan/Bollos', 1.00)"><i class="fas fa-bread-slice c-pan"></i><span>Pan/Pastas</span><small>1.00€</small></button>
+    <button class="boton" onclick="sumar('Pasta/Arroz', 1.50)"><i class="fas fa-box-archive c-despensa"></i><span>Pasta/Arroz</span><small>1.50€</small></button>
+    
+    <button class="boton" onclick="sumar('Conservas', 2.00)"><i class="fas fa-jar c-despensa"></i><span>Latas/Botes</span><small>2.00€</small></button>
+    <button class="boton" onclick="sumar('Congelados', 5.00)"><i class="fas fa-snowflake c-frio"></i><span>Congelados</span><small>5.00€</small></button>
+    <button class="boton" onclick="sumar('Galletas/D.', 2.20)"><i class="fas fa-cookie c-dulce"></i><span>Desayunos</span><small>2.20€</small></button>
+    <button class="boton" onclick="sumar('Bebidas/Ref.', 3.00)"><i class="fas fa-bottle-water c-leche"></i><span>Bebidas</span><small>3.00€</small></button>
+
+    <button class="boton" onclick="sumar('Limpieza', 4.00)"><i class="fas fa-soap c-limpieza"></i><span>Hogar/Limpieza</span><small>4.00€</small></button>
+    <button class="boton" onclick="sumar('Baño', 3.50)"><i class="fas fa-pump-soap c-limpieza"></i><span>Aseo Personal</span><small>3.50€</small></button>
+    <button class="boton" onclick="sumar('Papelería', 2.80)"><i class="fas fa-toilet-paper c-despensa"></i><span>Papel/Varios</span><small>2.80€</small></button>
+    <button class="boton" onclick="sumar('Otros', 1.00)"><i class="fas fa-cart-plus c-frio"></i><span>VARIOS</span><small>1.00€</small></button>
+</div>
+
+<div class="controles">
+    <button class="fab" style="background: var(--azul);" onclick="precioManual()">DATO</button>
+    <button class="fab" style="background: #2D3436;" onclick="sumar('Extra', 1.00)">+1€</button>
+</div>
+
+<script>
+    let total = parseFloat(localStorage.getItem('total')) || 0;
+    document.getElementById('bloc-notas').value = localStorage.getItem('notas') || "";
+    actualizarVista();
+
+    function sumar(nombre, precio) {
+        total += precio;
+        localStorage.setItem('total', total);
+        localStorage.setItem('notas', document.getElementById('bloc-notas').value);
+        actualizarVista(nombre);
+        if(navigator.vibrate) navigator.vibrate(40);
+    }
+
+    function precioManual() {
+        let p = prompt("Precio exacto:");
+        if (p) {
+            let num = parseFloat(p.replace(',', '.'));
+            if (!isNaN(num)) sumar('Manual', num);
+        }
+    }
+
+    function actualizarVista(nombre = "") {
+        document.getElementById('total').innerText = total.toFixed(2) + '€';
+        if(nombre) document.getElementById('info').innerText = "Último: " + nombre;
+    }
+
+    document.getElementById('bloc-notas').oninput = () => localStorage.setItem('notas', document.getElementById('bloc-notas').value);
+
+    let timer;
+    const btnTotal = document.getElementById('caja-total');
+    btnTotal.onmousedown = btnTotal.ontouchstart = () => {
+        timer = setTimeout(() => {
+            total = 0; localStorage.setItem('total', 0); actualizarVista();
+            document.getElementById('info').innerText = "Vaciado";
+        }, 1000);
+    };
+    btnTotal.onmouseup = btnTotal.ontouchend = () => clearTimeout(timer);
+</script>
+
+</body>
+</html>
